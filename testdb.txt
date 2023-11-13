@@ -1,0 +1,115 @@
+-- Let's drop the tables in case they exist from previous runs
+drop table if exists includes;
+drop table if exists lists;
+drop table if exists retweets;
+drop table if exists mentions;
+drop table if exists hashtags;
+drop table if exists tweets;
+drop table if exists follows;
+drop table if exists users;
+
+create table users (
+  usr         int,
+  pwd	      text,
+  name        text,
+  email       text,
+  city        text,
+  timezone    float,
+  primary key (usr)
+);
+create table follows (
+  flwer       int,
+  flwee       int,
+  start_date  date,
+  primary key (flwer,flwee),
+  foreign key (flwer) references users,
+  foreign key (flwee) references users
+);
+create table tweets (
+  tid	      int,
+  writer      int,
+  tdate       date,
+  text        text,
+  replyto     int,
+  primary key (tid),
+  foreign key (writer) references users,
+  foreign key (replyto) references tweets
+);
+create table hashtags (
+  term        text,
+  primary key (term)
+);
+create table mentions (
+  tid         int,
+  term        text,
+  primary key (tid,term),
+  foreign key (tid) references tweets,
+  foreign key (term) references hashtags
+);
+create table retweets (
+  usr         int,
+  tid         int,
+  rdate       date,
+  primary key (usr,tid),
+  foreign key (usr) references users,
+  foreign key (tid) references tweets
+);
+create table lists (
+  lname        text,
+  owner        int,
+  primary key (lname),
+  foreign key (owner) references users
+);
+create table includes (
+  lname       text,
+  member      int,
+  primary key (lname,member),
+  foreign key (lname) references lists,
+  foreign key (member) references users
+);
+
+
+-- add row
+-- ie INSERT INTO TABLE_NAME [(column1, column2, column3,...columnN)] VALUES (value1, value2, value3,...valueN);
+
+INSERT INTO users (usr, pwd, name, email, city, timezone) VALUES (123, '123', 'Stefan', 's@g.com', 'Edmonton', 5.0);
+INSERT INTO users (usr, pwd, name, email, city, timezone) VALUES (1, '123', 'Alice', 'a@g.com', 'Edmonton', 4.0);
+INSERT INTO users (usr, pwd, name, email, city, timezone) VALUES (2, '123', 'bob', 'b@g.com', 'Edmonton', 4.0);
+INSERT INTO users (usr, pwd, name, email, city, timezone) VALUES (3, '123', 'Cameron', 'c@g.com', 'Calgary', 3.0);
+INSERT INTO users (usr, pwd, name, email, city, timezone) VALUES (4, '123', 'Denise', 'd@g.com', 'Sask', 8.0);
+insert into users values (5, '123', 'George', 'g@g.com', 'Winny', -4.0)
+insert into users values (6, '123', 'George', 'g@g.com', 'Winny', -4.0)
+
+INSERT INTO follows (flwer, flwee, start_date) VALUES (1, 123, '2007-01-01');
+INSERT INTO follows (flwer, flwee, start_date) VALUES (2, 123, '2007-01-02');
+INSERT INTO follows (flwer, flwee, start_date) VALUES (4, 123, '2007-01-05');
+INSERT INTO follows (flwer, flwee, start_date) VALUES (123, 1, '2007-01-05');
+
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (0, 123, '2023-05-05', '3rd most recent', NULL);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (1, 123, '2023-05-06', 'middle', NULL);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (2, 123, '2023-05-07', 'most recent', NULL);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (3, 123, '2022-05-07', 'hello world a long time agoo...!', NULL);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (4, 1, '2023-10-07', 'u1 says hi', NULL);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (5, 1, '2023-11-06', 'u1 says bbye', NULL);
+INSERT INTO tweets (tid, writer, tdate, text, replyto) VALUES (200, 123, '2023-01-01', 'sample tweet', null);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (6, 1, '2023-11-06', 'reply to 0', 0);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (7, 2, '2023-11-06', 'reply to 4', 4);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (8, 2, '2023-11-06', 'reply to 0', 0);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (9, 2, '2023-11-06', 'reply to 1', 1);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (10, 2, '2023-11-06', 'reply to 2', 2);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (100, 2, '2023-11-06', 's0', null);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (101, 2, '2023-11-06', 's1', null);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (102, 2, '2023-11-06', 's2', null);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (103, 2, '2023-11-06', 's3', null);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (104, 2, '2023-11-06', 's4', null);
+insert into tweets (tid, writer, tdate, text, replyto) VALUES (105, 2, '2023-11-06', 's5', null);
+
+insert into retweets (usr, tid, rdate) VALUES (123, 4, '2023-11-06');
+insert into retweets (usr, tid, rdate) VALUES (1, 4, '2023-11-01');
+insert into retweets (usr, tid, rdate) VALUES (2, 4, '2023-11-02');
+
+INSERT INTO hashtags VALUES ("sample");
+INSERT INTO hashtags VALUES ("test");
+
+INSERT INTO mentions (tid,term) VALUES (200, "sample");
+INSERT INTO mentions VALUES (100, "test");
